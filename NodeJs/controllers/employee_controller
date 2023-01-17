@@ -1,5 +1,5 @@
 const express = require('express');
-
+var ObjectId = require('mongoose').Types.ObjectId;
 var router = express.Router();
 
 var { Employee } = require('../models/employee_model');
@@ -15,6 +15,73 @@ router.get('/', (req, res) => {
             console.log('Error Retriving Employees !' + JSON.stringify(err, undefined, 2));
         }
     });
+});
+
+//retrieve specific data
+// => localhost:3000/employees/id
+router.get('/:id', (req, res) => {
+   if(!ObjectId.isValid(req.params.id))
+        return res.status(400).send(`No record with given id :' ${req.params.id}`);
+
+    Employee.findById(req.params.id, (err, doc) => {
+        if(!err) { 
+            res.send(doc); 
+        }
+        else { 
+            console.log('Error Retriving Employee !' + JSON.stringify(err, undefined, 2)); 
+        }
+    });
+});
+
+//create data
+// localhost:3000/employees/
+router.post('/', (req, res) => {
+    var emp = new Employee({
+        name: req.body.name,
+        position: req.body.position,
+        office: req.body.office,
+        salary: req.body.salary,
+    });
+    emp.save((err, doc) => {
+        if(!err) {
+            res.send(doc);
+        }
+        else {
+            console.log('Error..cant save Employee details !', JSON.stringify(err, undefined, 2));
+        }
+    });
+});
+
+//update specific data
+// => localhost:3000/employees/id
+router.put('/:id', (req, res) => {
+    if(!ObjectId.isValid(req.params.id))
+    return res.status(400).send(`No record with given id ! ${req.params.id}`);
+
+    var emp = {
+        name: req.body.name,
+        position: req.body.position,
+        office: req.body.office,
+        salary: req.body.salary,
+    };
+    Employee.findByIdAndUpdate(req.params.id, { $set: emp }, { new: true }, (err, doc) => {
+        if(!err) { res.send(doc); }
+        else { console.log('Error updating employee !', JSON.stringify(err, undefined, 2)); }
+    });
+
+});
+
+//delete specific data
+// => localhost:3000/employees/id
+router.delete('/:id', (req, res) => {
+    if(!ObjectId.isValid(req.params.id))
+    return res.status(400).send(`No record with given id ! ${req.params.id}`);
+
+    Employee.findByIdAndRemove(req.params.id, (err, doc) => {
+        if(!err) { res.send(doc); }
+        else { console.log('Error deleting employee !', JSON.stringify(err, undefined, 2)); }
+    });
+
 });
 
 module.exports = router;
