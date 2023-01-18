@@ -15,5 +15,4 @@ export class EmployeeService {
   selectedEmployee: Employee = new Employee;
   employees: Employee[] = [];
 
-  constructor() { }
 }

@@ -30,4 +30,8 @@ export class EmployeeComponent {
     }
   }
 
+  onSubmit( form: NgForm ){
+    
+  }
+
 }
