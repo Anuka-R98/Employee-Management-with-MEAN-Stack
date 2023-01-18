@@ -13,7 +13,7 @@ declare var M: any;
 })
 
 export class EmployeeComponent {
-
+  
   constructor( protected employeeService: EmployeeService ) {}
 
   ngOnInit(): void {
