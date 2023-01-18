@@ -34,17 +34,39 @@ export class EmployeeComponent {
   }
 
   onSubmit( form: NgForm ) {
-    this.employeeService.postEmployee(form.value).subscribe((res) => {
-      this.resetForm(form);
-      M.toast({ html: 'Saved Successfully', classes: 'rounded' });
-      // console.log(form);
-    })
+    if(form.value._id == "") {
+      this.employeeService.postEmployee(form.value).subscribe((res) => {
+        this.resetForm(form);
+        this.refreshEmployeeList();
+        M.toast({ html: 'Saved Successfully', classes: 'rounded' });
+      });
+    }
+    else {
+      this.employeeService.putEmployee(form.value).subscribe((res) => {
+        this.resetForm(form);
+        this.refreshEmployeeList();
+        M.toast({ html: 'Updated Successfully', classes: 'rounded' });
+      });
+    }
   }
 
   refreshEmployeeList() {
     this.employeeService.getEmployeeList().subscribe((res) => {
       this.employeeService.employees = res as Employee[];
-    })
+    });
   }
 
+  onEdit( emp: Employee ) {
+    this.employeeService.selectedEmployee = emp;
+  }
+
+  onDelete( _id:string, form:NgForm ) {
+    if(confirm('Are sure to delete this record ?') == true) {
+      this.employeeService.deleteEmployee(_id).subscribe((res) => {
+        this.refreshEmployeeList();
+        this.resetForm(form);
+        M.toast({ html: 'Deleted Successfully', classes: 'rounded' });
+      });
+    }
+  }
 }
